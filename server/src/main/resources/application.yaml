@@ -1,0 +1,17 @@
+#see a full list at http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+app:
+
+server:
+  port:                                                               8080
+  display-name:                                                       Tus-Server
+
+spring:
+  application.name:                                                   Tus-Server
+---
+spring.profiles:                                                      prod
+---
+spring.profiles:                                                      uat
+---
+spring.profiles:                                                      dev
+---
+spring.profiles:                                                      local

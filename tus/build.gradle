@@ -1,0 +1,15 @@
+repositories {
+    jcenter()
+}
+
+apply plugin: 'java'
+
+build {
+    version             = "0.1"
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+jar {
+    archiveName 'tus.jar'
+}

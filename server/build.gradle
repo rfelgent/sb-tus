@@ -1,0 +1,44 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.6.RELEASE"
+    }
+}
+repositories {
+    jcenter()
+}
+
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+
+build {
+    version             = "0.1"
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+jar {
+    archiveName 'tus-server.jar'
+}
+
+bootRun {
+    String activeProfile =  System.getProperty('spring.profiles.active', 'local')
+    systemProperties['spring.profiles.active'] = activeProfile
+}
+
+configurations {
+    compile.exclude module: 'spring-boot-starter-tomcat'
+}
+
+dependencies {
+    //OWN
+    compile project(':tus')
+    //3rd
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-jetty'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'io.tus.java.client:tus-java-client:0.3.1'
+}

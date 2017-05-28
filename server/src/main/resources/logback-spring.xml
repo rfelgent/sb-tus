@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <!-- taken from spring boot base.xml -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/spring.log}"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+    <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
+
+    <root level="INFO">
+        <springProfile name="local,test">
+            <appender-ref ref="CONSOLE" />
+        </springProfile>
+
+        <springProfile name="prod,uat,dev">
+            <appender-ref ref="FILE" />
+        </springProfile>
+    </root>
+    <jmxConfigurator/>
+</configuration>
