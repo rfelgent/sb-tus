@@ -8,7 +8,7 @@ import java.util.UUID;
  * @author rfelgentraeger
  */
 @Service
-public class UploadIdGenerator {
+public class AssetIdGenerator {
 
     public String generateId() {
         return UUID.randomUUID().toString();

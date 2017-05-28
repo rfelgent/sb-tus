@@ -3,7 +3,7 @@ package de.rfelgent.tus;
 /**
  * @author rfelgentraeger
  */
-public interface Extensions {
+public interface TusExtensions {
 
     String CREATION = "creation";
     String EXPIRATION = "expiration";

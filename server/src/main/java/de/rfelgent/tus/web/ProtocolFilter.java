@@ -1,7 +1,7 @@
 package de.rfelgent.tus.web;
 
-import de.rfelgent.tus.Headers;
-import de.rfelgent.tus.Version;
+import de.rfelgent.tus.TusHeaders;
+import de.rfelgent.tus.TusVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -24,18 +24,18 @@ public class ProtocolFilter implements Filter {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProtocolFilter.class);
 
     /** the supported version */
-    private String version = Version.SEMVERSION_1_0_0;
+    private String version = TusVersion.SEMVERSION_1_0_0;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest)request;
         HttpServletResponse resp = (HttpServletResponse)response;
 
-        String versionHeader = req.getHeader(Headers.TUS_RESUMABLE);
+        String versionHeader = req.getHeader(TusHeaders.TUS_RESUMABLE);
         if (versionHeader == null ||
-                !Version.SEMVERSION_1_0_0.equalsIgnoreCase(version)) {
+                !TusVersion.SEMVERSION_1_0_0.equalsIgnoreCase(version)) {
 
-            resp.setHeader(Headers.TUS_VERSION, version);
+            resp.setHeader(TusHeaders.TUS_VERSION, version);
             resp.setStatus(HttpStatus.PRECONDITION_FAILED.value());
             LOGGER.warn("Canceling processing request, as the version {} is not supported", versionHeader);
             return;
@@ -45,7 +45,7 @@ public class ProtocolFilter implements Filter {
             chain.doFilter(request, response);
         } finally {
             if (!"OPTIONS".equalsIgnoreCase(req.getMethod())) {
-                resp.setHeader(Headers.TUS_RESUMABLE, version);
+                resp.setHeader(TusHeaders.TUS_RESUMABLE, version);
             }
         }
 

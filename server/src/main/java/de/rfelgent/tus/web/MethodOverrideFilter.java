@@ -1,6 +1,6 @@
 package de.rfelgent.tus.web;
 
-import de.rfelgent.tus.Headers;
+import de.rfelgent.tus.TusHeaders;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -23,7 +23,7 @@ public class MethodOverrideFilter extends OncePerRequestFilter {
 
         @Override
         public String getMethod() {
-            String override = getHeader(Headers.METHOD_OVERRIDE);
+            String override = getHeader(TusHeaders.METHOD_OVERRIDE);
             if (override != null) {
                 return override.toUpperCase();
             } else {

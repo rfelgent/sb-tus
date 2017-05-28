@@ -1,6 +1,6 @@
 package de.rfelgent.tus.web;
 
-import de.rfelgent.tus.Headers;
+import de.rfelgent.tus.TusHeaders;
 import de.rfelgent.tus.domain.Asset;
 import de.rfelgent.tus.service.AssetFactory;
 import de.rfelgent.tus.service.AssetService;
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -36,8 +35,8 @@ public class AssetController {
 
     @PostMapping(value = {"", "/"})
     public ResponseEntity<Void> init(
-            @RequestHeader(value = Headers.UPLOAD_LENGTH, required = false) Long uploadSize,
-            @RequestHeader(value = Headers.UPLOAD_META, required = false) String uploadMeta) throws MalformedURLException {
+            @RequestHeader(value = TusHeaders.UPLOAD_LENGTH, required = false) Long uploadSize,
+            @RequestHeader(value = TusHeaders.UPLOAD_META, required = false) String uploadMeta) throws MalformedURLException {
 
         Asset asset = assetFactory.newInstance();
         asset.setUploadedSize(uploadSize);
@@ -51,7 +50,7 @@ public class AssetController {
 
     @RequestMapping(value = {"/{id}", "/{id}/"}, method = {RequestMethod.PATCH})
     public ResponseEntity<Void> upload(@RequestHeader(value = "Content-Type") String contentType,
-                       @RequestHeader(value = Headers.UPLOAD_OFFSET) Long offset,
+                       @RequestHeader(value = TusHeaders.UPLOAD_OFFSET) Long offset,
                        @PathVariable(value = "id") String id) {
         if (!"application/offset+octet-stream".equalsIgnoreCase(contentType)) {
             //TODO: error handling
@@ -69,7 +68,7 @@ public class AssetController {
 
         asset = assetService.findAsset(id);
         return ResponseEntity.noContent()
-                .header(Headers.UPLOAD_OFFSET, asset.getUploadedSize() + "")
+                .header(TusHeaders.UPLOAD_OFFSET, asset.getUploadedSize() + "")
                 .build();
     }
 
@@ -87,9 +86,9 @@ public class AssetController {
 
         ResponseEntity.HeadersBuilder builder = ResponseEntity.status(HttpStatus.OK)
                 .cacheControl(CacheControl.noStore())
-                .header(Headers.UPLOAD_OFFSET, asset.getUploadedSize() + "");
+                .header(TusHeaders.UPLOAD_OFFSET, asset.getUploadedSize() + "");
         if (asset.getTotalSize() != null) {
-                builder.header(Headers.UPLOAD_LENGTH, asset.getTotalSize() + "");
+                builder.header(TusHeaders.UPLOAD_LENGTH, asset.getTotalSize() + "");
         }
         return builder.build();
     }

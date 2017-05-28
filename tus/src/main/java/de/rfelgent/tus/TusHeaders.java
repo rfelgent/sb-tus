@@ -3,7 +3,7 @@ package de.rfelgent.tus;
 /**
  * @author rfelgentraeger
  */
-public interface Headers {
+public interface TusHeaders {
 
     String TUS_RESUMABLE = "Tus-Resumable";
     String TUS_VERSION = "Tus-Version";

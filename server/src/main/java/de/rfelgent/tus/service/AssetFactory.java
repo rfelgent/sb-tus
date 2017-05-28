@@ -14,7 +14,7 @@ import java.util.Date;
 public class AssetFactory {
 
     @Autowired
-    private UploadIdGenerator uploadIdGenerator;
+    private AssetIdGenerator uploadIdGenerator;
 
     public Asset newInstance() {
         Asset asset = new Asset();
