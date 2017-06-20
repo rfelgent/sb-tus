@@ -9,13 +9,14 @@ public interface UploadLocker {
 
     /**
      * Locks the given resource.
+     *
      * @param referenceId
      * @throws LockException
      */
     void lock(String referenceId) throws LockException;
 
     /**
-     * Unlocks the given resource. Not locked resources are silently ignored.
+     * Unlocks the given resource. Not locked resources are silently ignored, as if they where locked and then successfully released.
      *
      * @param referenceId
      * @throws LockException
