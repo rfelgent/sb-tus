@@ -3,7 +3,7 @@ package de.rfelgent.tus.domain;
 /**
  * @author rfelgentraeger
  */
-public class AssetNotFoundException extends Exception {
+public class AssetNotFoundException extends StorageException {
 
     public AssetNotFoundException() {
         super();

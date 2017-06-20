@@ -65,7 +65,7 @@ public class AssetController {
             //TODO: handle orphaned resources (there is no URL to reference it!)
             throw new RuntimeException("Location resolving failed");
         }
-        publisher.publishEvent(new AssetCreatedEvent(asset));
+        publisher.publishEvent(new AssetCreatedEvent(asset, location));
 
         return ResponseEntity.noContent()
                 .header("Location", location.toString()).build();

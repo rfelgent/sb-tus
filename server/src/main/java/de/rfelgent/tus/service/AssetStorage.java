@@ -1,7 +1,6 @@
 package de.rfelgent.tus.service;
 
 import de.rfelgent.tus.domain.Asset;
-import de.rfelgent.tus.domain.AssetNotFoundException;
 import de.rfelgent.tus.domain.AssetStatus;
 import de.rfelgent.tus.domain.Upload;
 import de.rfelgent.tus.domain.StorageException;
@@ -16,8 +15,6 @@ public interface AssetStorage {
     Asset find(String referenceId);
 
     /**
-     * Note: the implementation is required to generate a referenceId
-     *
      * @param asset
      * @throws StorageException
      */

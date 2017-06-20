@@ -4,7 +4,6 @@ import de.rfelgent.tus.domain.Asset;
 import de.rfelgent.tus.domain.AssetStatus;
 import de.rfelgent.tus.domain.StorageException;
 import de.rfelgent.tus.domain.Upload;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -15,9 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 public class AssetStorageInMemory implements AssetStorage {
-
-    @Autowired
-    private AssetReferenceIdGenerator assetReferenceIdGenerator;
 
     /* in memory store of the created assets */
     private Map<String, Asset> assets = new ConcurrentHashMap();
@@ -30,17 +26,15 @@ public class AssetStorageInMemory implements AssetStorage {
     @Override
     public void init(Asset asset) throws StorageException {
         if (find(asset.getReferenceId()) != null) {
-            throw new StorageException("Asset already created");
+            throw new StorageException("Asset already exists");
         }
-
-        asset.setReferenceId(assetReferenceIdGenerator.generateId());
 
         assets.put(asset.getReferenceId(), asset);
     }
 
     @Override
     public void write(Upload upload) throws StorageException {
-
+        throw new StorageException("Not implemented yet");
     }
 
     /**
