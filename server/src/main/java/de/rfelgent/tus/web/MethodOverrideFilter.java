@@ -23,17 +23,16 @@ public class MethodOverrideFilter extends OncePerRequestFilter {
 
         @Override
         public String getMethod() {
-            String override = getHeader(TusHeaders.METHOD_OVERRIDE);
-            if (override != null) {
-                return override.toUpperCase();
-            } else {
-                return super.getMethod();
-            }
+            return getHeader(TusHeaders.METHOD_OVERRIDE);
         }
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        filterChain.doFilter(new MethodRequestWrapper(request), response);
+        if (request.getHeader(TusHeaders.METHOD_OVERRIDE) != null) {
+            filterChain.doFilter(new MethodRequestWrapper(request), response);
+        } else {
+            filterChain.doFilter(request, response);
+        }
     }
 }
