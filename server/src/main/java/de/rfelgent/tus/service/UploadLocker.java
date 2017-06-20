@@ -7,6 +7,11 @@ import de.rfelgent.tus.domain.LockException;
  */
 public interface UploadLocker {
 
+    /**
+     * Locks the given resource.
+     * @param referenceId
+     * @throws LockException
+     */
     void lock(String referenceId) throws LockException;
 
     /**

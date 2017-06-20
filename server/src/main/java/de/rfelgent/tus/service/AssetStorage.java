@@ -2,15 +2,19 @@ package de.rfelgent.tus.service;
 
 import de.rfelgent.tus.domain.Asset;
 import de.rfelgent.tus.domain.AssetStatus;
-import de.rfelgent.tus.domain.Upload;
 import de.rfelgent.tus.domain.StorageException;
 
-import java.net.URL;
+import java.io.InputStream;
 
 /**
  * @author rfelgentraeger
  */
 public interface AssetStorage {
+
+    /**
+     * @param referenceId
+     */
+    void terminate(String referenceId);
 
     Asset find(String referenceId);
 
@@ -20,7 +24,7 @@ public interface AssetStorage {
      */
     void init(Asset asset) throws StorageException;
 
-    void write(Upload upload) throws StorageException;
+    void write(String referenceId, InputStream is) throws StorageException;
 
     /**
      * @param referenceId

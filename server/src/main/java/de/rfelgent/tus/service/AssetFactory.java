@@ -22,6 +22,7 @@ public class AssetFactory {
         asset.setMeta(Collections.EMPTY_MAP);
 
         asset.setReferenceId(assetReferenceIdGenerator.generateId());
+
         return asset;
     }
 }

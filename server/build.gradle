@@ -38,7 +38,9 @@ dependencies {
     //3rd
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-jetty'
+    compile 'commons-io:commons-io:2.5'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'io.tus.java.client:tus-java-client:0.3.1'
+    testCompile 'org.apache.httpcomponents:httpclient:4.5.3'
 }

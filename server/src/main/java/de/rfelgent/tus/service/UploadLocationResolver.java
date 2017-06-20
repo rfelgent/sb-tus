@@ -17,7 +17,14 @@ public class UploadLocationResolver {
     private String domain = "localhost";
     private String protocol = "http";
 
-    public URL resolve(Asset asset) throws MalformedURLException {
+    /**
+     * According to the spec, the URL MAY be absolute or relative
+     *
+     * @param asset
+     * @return
+     * @throws MalformedURLException
+     */
+    public String resolve(Asset asset) {
         StringBuilder sb = new StringBuilder();
         sb.append(getProtocol()).append("://");
         sb.append(getDomain());
@@ -30,7 +37,7 @@ public class UploadLocationResolver {
         }
         sb.append(asset.getReferenceId());
 
-        return new URL(sb.toString());
+        return sb.toString();
     }
 
     public String getPort() {

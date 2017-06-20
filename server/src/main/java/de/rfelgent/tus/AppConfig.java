@@ -1,6 +1,8 @@
 package de.rfelgent.tus;
 
 import de.rfelgent.tus.service.AssetFactory;
+import de.rfelgent.tus.service.ExpirationService;
+import de.rfelgent.tus.service.ExpirationService7Days;
 import de.rfelgent.tus.service.UploadLocker;
 import de.rfelgent.tus.service.UploadLockerInMemory;
 import de.rfelgent.tus.web.MethodOverrideFilter;
@@ -29,6 +31,12 @@ public class AppConfig {
     @ConditionalOnMissingBean(UploadLocker.class)
     public UploadLocker assetUploadLocker() {
         return new UploadLockerInMemory();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(ExpirationService.class)
+    public ExpirationService expirationService() {
+        return new ExpirationService7Days();
     }
 
     @Bean

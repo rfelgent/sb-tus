@@ -10,4 +10,5 @@ public interface TusExtensions {
     String TERMINATION = "termination";
     String CONCATENATION = "concatenation";
     String CHECKSUM = "checksum";
+    String CREATION_DEFER = "creation-defer-length";
 }

@@ -13,10 +13,9 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.joining;
 
 /**
- * An asset represents any binary data (video, picture, sound data...) to upload.
+ * An asset represents any binary meta data (video, picture, sound data...).
  *
  * @author rfelgentraeger
- * @see {@link Upload}
  */
 public class Asset {
 
@@ -28,8 +27,6 @@ public class Asset {
     /** date when the asset was created */
     @NotNull
     private Date creationDate;
-    /** date when the asset expires and will be discarded for further use */
-    private Date expirationDate;
     /** metadata of the asset */
     private Map<String, String> meta;
 
@@ -55,14 +52,6 @@ public class Asset {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
-    }
-
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
-
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
     }
 
     public Map<String, String> getMeta() {

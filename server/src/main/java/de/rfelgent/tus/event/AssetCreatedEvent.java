@@ -11,9 +11,9 @@ public class AssetCreatedEvent {
 
     private Asset asset;
 
-    private URL location;
+    private String location;
 
-    public AssetCreatedEvent(Asset asset, URL location) {
+    public AssetCreatedEvent(Asset asset, String location) {
         this.asset = asset;
         this.location = location;
     }
@@ -22,7 +22,7 @@ public class AssetCreatedEvent {
         return asset;
     }
 
-    public URL getLocation() {
+    public String getLocation() {
         return location;
     }
 }
