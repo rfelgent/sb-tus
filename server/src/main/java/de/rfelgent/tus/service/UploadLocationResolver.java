@@ -12,7 +12,6 @@ import java.net.URL;
 @Service
 public class UploadLocationResolver {
 
-
     private String port = null;
     private String path = "/files/";
     private String domain = "localhost";
@@ -29,7 +28,7 @@ public class UploadLocationResolver {
         if (!getPath().endsWith("/")) {
             sb.append("/");
         }
-        sb.append(asset.getId());
+        sb.append(asset.getReferenceId());
 
         return new URL(sb.toString());
     }

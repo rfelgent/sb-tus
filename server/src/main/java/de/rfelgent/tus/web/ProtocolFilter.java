@@ -40,7 +40,7 @@ public class ProtocolFilter implements Filter {
             LOGGER.warn("Canceling processing request, as the version {} is not supported", versionHeader);
             return;
         }
-        LOGGER.debug("Version {} is supported. Continue to process request", versionHeader);
+        LOGGER.debug("Version {} supported. Continue to process request", versionHeader);
         try {
             chain.doFilter(request, response);
         } finally {

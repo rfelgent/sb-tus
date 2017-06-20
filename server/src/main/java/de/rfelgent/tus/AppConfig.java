@@ -1,6 +1,8 @@
 package de.rfelgent.tus;
 
 import de.rfelgent.tus.service.AssetFactory;
+import de.rfelgent.tus.service.UploadLocker;
+import de.rfelgent.tus.service.UploadLockerInMemory;
 import de.rfelgent.tus.web.MethodOverrideFilter;
 import de.rfelgent.tus.web.ProtocolFilter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,6 +23,12 @@ public class AppConfig {
     @ConditionalOnMissingBean(AssetFactory.class)
     public AssetFactory assetFactory() {
         return new AssetFactory();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(UploadLocker.class)
+    public UploadLocker assetUploadLocker() {
+        return new UploadLockerInMemory();
     }
 
     @Bean

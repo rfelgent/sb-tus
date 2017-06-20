@@ -1,6 +1,5 @@
 package de.rfelgent.tus.domain;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.beans.Transient;
 import java.nio.charset.StandardCharsets;
@@ -17,33 +16,29 @@ import static java.util.stream.Collectors.joining;
  * An asset represents any binary data (video, picture, sound data...) to upload.
  *
  * @author rfelgentraeger
+ * @see {@link Upload}
  */
 public class Asset {
 
-    /** id of the asset */
+    /** referenceId of the asset */
     @NotNull
-    private String id;
+    private String referenceId;
     /** total size of the data to upload in bytes */
     private Long totalSize;
-    /** uploaded data in bytes */
+    /** date when the asset was created */
     @NotNull
-    @Min(0)
-    private Long uploadedSize;
-    /** date when was the asset created */
-    @NotNull
-    private Date creationDate = new Date();
+    private Date creationDate;
     /** date when the asset expires and will be discarded for further use */
     private Date expirationDate;
     /** metadata of the asset */
     private Map<String, String> meta;
 
-
-    public String getId() {
-        return id;
+    public String getReferenceId() {
+        return referenceId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setReferenceId(String referenceId) {
+        this.referenceId = referenceId;
     }
 
     public Long getTotalSize() {
@@ -52,14 +47,6 @@ public class Asset {
 
     public void setTotalSize(Long totalSize) {
         this.totalSize = totalSize;
-    }
-
-    public Long getUploadedSize() {
-        return uploadedSize;
-    }
-
-    public void setUploadedSize(Long uploadedSize) {
-        this.uploadedSize = uploadedSize;
     }
 
     public Date getCreationDate() {

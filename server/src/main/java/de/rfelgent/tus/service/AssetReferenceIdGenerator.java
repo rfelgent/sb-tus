@@ -8,9 +8,9 @@ import java.util.UUID;
  * @author rfelgentraeger
  */
 @Service
-public class AssetIdGenerator {
+public class AssetReferenceIdGenerator {
 
     public String generateId() {
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID().toString().replace("-", "");
     }
 }
