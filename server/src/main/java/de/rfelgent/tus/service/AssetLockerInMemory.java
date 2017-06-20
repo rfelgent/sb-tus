@@ -2,23 +2,23 @@ package de.rfelgent.tus.service;
 
 import de.rfelgent.tus.domain.LockException;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author rfelgentraeger
  */
-public class UploadLockerInMemory implements UploadLocker {
+public class AssetLockerInMemory implements AssetLocker {
 
-    private Set<String> locks = new HashSet();
+    private Map<String, Boolean> locks = new ConcurrentHashMap<>();
 
     @Override
     public void lock(String referenceId) throws LockException {
-        if (locks.contains(referenceId)) {
+        if (locks.get(referenceId) != null) {
             throw new LockException("Upload is already locked");
         }
 
-        locks.add(referenceId);
+        locks.put(referenceId, Boolean.TRUE);
     }
 
     @Override

@@ -10,8 +10,8 @@ import de.rfelgent.tus.event.AssetTerminatedEvent;
 import de.rfelgent.tus.service.AssetFactory;
 import de.rfelgent.tus.service.AssetStorage;
 import de.rfelgent.tus.service.ExpirationService;
-import de.rfelgent.tus.service.UploadLocationResolver;
-import de.rfelgent.tus.service.UploadLocker;
+import de.rfelgent.tus.service.LocationResolver;
+import de.rfelgent.tus.service.AssetLocker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.CacheControl;
@@ -42,9 +42,9 @@ public class AssetController {
     @Autowired
     private ApplicationEventPublisher publisher;
     @Autowired
-    private UploadLocker uploadLocker;
+    private AssetLocker uploadLocker;
     @Autowired
-    private UploadLocationResolver uploadLocationResolver;
+    private LocationResolver locationResolver;
     @Autowired
     private ExpirationService expirationService;
 
@@ -54,7 +54,7 @@ public class AssetController {
             @RequestHeader(value = TusHeaders.UPLOAD_META, required = false) String uploadMeta) throws StorageException {
 
         Asset asset = assetFactory.newInstance();
-        //some clients handle "unknown upload size/deferred upload" with an upload length equal to 0, e.g. tus-java-clien !
+        //some clients handle "unknown upload size/deferred upload" with an upload length equal to 0, e.g. tus-java-client !
         if (uploadSize != null && uploadSize > 0) {
             asset.setTotalSize(uploadSize);
         }
@@ -64,7 +64,7 @@ public class AssetController {
 
         String location;
         try {
-            location = uploadLocationResolver.resolve(asset);
+            location = locationResolver.resolve(asset);
         } catch (Exception e) {
             //TODO: handle orphaned resources (there is no URL to reference it!) Maybe TUS expiration feature?
             throw new RuntimeException("Location resolving failed");

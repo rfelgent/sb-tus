@@ -1,16 +1,15 @@
 package de.rfelgent.tus.service;
 
-import org.springframework.stereotype.Service;
-
+import de.rfelgent.tus.domain.Asset;
 import java.util.UUID;
 
 /**
  * @author rfelgentraeger
  */
-@Service
-public class AssetReferenceIdGenerator {
+public class IdGeneratorUuid implements IdGenerator {
 
-    public String generateId() {
+    @Override
+    public String generateId(Asset asset) {
         return UUID.randomUUID().toString().replace("-", "");
     }
 }

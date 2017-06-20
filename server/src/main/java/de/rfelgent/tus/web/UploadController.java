@@ -7,7 +7,7 @@ import de.rfelgent.tus.domain.AssetStatus;
 import de.rfelgent.tus.domain.LockException;
 import de.rfelgent.tus.domain.StorageException;
 import de.rfelgent.tus.service.AssetStorage;
-import de.rfelgent.tus.service.UploadLocker;
+import de.rfelgent.tus.service.AssetLocker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class UploadController {
     @Autowired
     private AssetStorage assetStorage;
     @Autowired
-    private UploadLocker uploadLocker;
+    private AssetLocker uploadLocker;
 
     @RequestMapping(value = {"/{id}", "/{id}/"}, method = {RequestMethod.PATCH})
     public ResponseEntity<Void> upload(@RequestHeader(value = "Content-Type", required = false) String contentType,

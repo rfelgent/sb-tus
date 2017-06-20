@@ -1,29 +1,18 @@
 package de.rfelgent.tus.service;
 
 import de.rfelgent.tus.domain.Asset;
-import org.springframework.stereotype.Service;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
  * @author rfelgentraeger
  */
-@Service
-public class UploadLocationResolver {
+public class LocationResolverAbsolute implements LocationResolver {
 
     private String port = null;
     private String path = "/files/";
     private String domain = "localhost";
     private String protocol = "http";
 
-    /**
-     * According to the spec, the URL MAY be absolute or relative
-     *
-     * @param asset
-     * @return
-     * @throws MalformedURLException
-     */
+    @Override
     public String resolve(Asset asset) {
         StringBuilder sb = new StringBuilder();
         sb.append(getProtocol()).append("://");

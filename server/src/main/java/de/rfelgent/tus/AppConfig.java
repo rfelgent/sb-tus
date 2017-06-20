@@ -1,10 +1,16 @@
 package de.rfelgent.tus;
 
 import de.rfelgent.tus.service.AssetFactory;
+import de.rfelgent.tus.service.AssetLocker;
+import de.rfelgent.tus.service.AssetLockerInMemory;
+import de.rfelgent.tus.service.AssetStorage;
+import de.rfelgent.tus.service.AssetStorageInMemory;
 import de.rfelgent.tus.service.ExpirationService;
-import de.rfelgent.tus.service.ExpirationService7Days;
-import de.rfelgent.tus.service.UploadLocker;
-import de.rfelgent.tus.service.UploadLockerInMemory;
+import de.rfelgent.tus.service.ExpirationServiceDays;
+import de.rfelgent.tus.service.IdGenerator;
+import de.rfelgent.tus.service.IdGeneratorUuid;
+import de.rfelgent.tus.service.LocationResolver;
+import de.rfelgent.tus.service.LocationResolverAbsolute;
 import de.rfelgent.tus.web.MethodOverrideFilter;
 import de.rfelgent.tus.web.ProtocolFilter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,21 +28,38 @@ import java.util.EnumSet;
 public class AppConfig {
 
     @Bean
+    @ConditionalOnMissingBean(LocationResolver.class)
+    public LocationResolver locationResolver() {
+        return new LocationResolverAbsolute();
+    }
+    @Bean
+    @ConditionalOnMissingBean(AssetStorage.class)
+    public AssetStorage assetStorage() {
+        return new AssetStorageInMemory();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(IdGenerator.class)
+    public IdGenerator idGenerator() {
+        return new IdGeneratorUuid();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(AssetFactory.class)
     public AssetFactory assetFactory() {
         return new AssetFactory();
     }
 
     @Bean
-    @ConditionalOnMissingBean(UploadLocker.class)
-    public UploadLocker assetUploadLocker() {
-        return new UploadLockerInMemory();
+    @ConditionalOnMissingBean(AssetLocker.class)
+    public AssetLocker assetUploadLocker() {
+        return new AssetLockerInMemory();
     }
 
     @Bean
     @ConditionalOnMissingBean(ExpirationService.class)
     public ExpirationService expirationService() {
-        return new ExpirationService7Days();
+        return new ExpirationServiceDays();
     }
 
     @Bean

@@ -14,14 +14,14 @@ import java.util.Date;
 public class AssetFactory {
 
     @Autowired
-    private AssetReferenceIdGenerator assetReferenceIdGenerator;
+    private IdGenerator idGenerator;
 
     public Asset newInstance() {
         Asset asset = new Asset();
         asset.setCreationDate(new Date());
         asset.setMeta(Collections.EMPTY_MAP);
 
-        asset.setReferenceId(assetReferenceIdGenerator.generateId());
+        asset.setReferenceId(idGenerator.generateId(asset));
 
         return asset;
     }

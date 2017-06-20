@@ -5,7 +5,7 @@ import de.rfelgent.tus.domain.LockException;
 /**
  * @author rfelgentraeger
  */
-public interface UploadLocker {
+public interface AssetLocker {
 
     /**
      * Locks the given resource.

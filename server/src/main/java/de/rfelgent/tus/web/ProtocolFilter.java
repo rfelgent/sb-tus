@@ -32,9 +32,7 @@ public class ProtocolFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse)response;
 
         String versionHeader = req.getHeader(TusHeaders.TUS_RESUMABLE);
-        if (versionHeader == null ||
-                !TusVersion.SEMVERSION_1_0_0.equalsIgnoreCase(version)) {
-
+        if (!version.equalsIgnoreCase(versionHeader)) {
             resp.setHeader(TusHeaders.TUS_VERSION, version);
             resp.setStatus(HttpStatus.PRECONDITION_FAILED.value());
             LOGGER.warn("Canceling processing request, as the version {} is not supported", versionHeader);

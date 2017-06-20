@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author rfelgentraeger
  */
-@Service
 public class AssetStorageInMemory implements AssetStorage {
 
     /* created assets */

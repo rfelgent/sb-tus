@@ -1,6 +1,7 @@
 package de.rfelgent.tus;
 
-import de.rfelgent.tus.service.UploadLocationResolver;
+import de.rfelgent.tus.service.LocationResolver;
+import de.rfelgent.tus.service.LocationResolverAbsolute;
 import io.tus.java.client.ProtocolException;
 import io.tus.java.client.TusClient;
 import io.tus.java.client.TusUpload;
@@ -44,7 +45,7 @@ public class TusClientUploadTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(TusClientUploadTest.class);
 
     @Autowired
-    private UploadLocationResolver uploadLocationResolver;
+    private LocationResolver locationResolver;
 
     @LocalServerPort
     private String serverPort;
@@ -60,7 +61,7 @@ public class TusClientUploadTest {
 
     @Before
     public void before() {
-        uploadLocationResolver.setPort(serverPort);
+        ((LocationResolverAbsolute)locationResolver).setPort(serverPort);
 
         httpClient = HttpClientBuilder.create().build();
     }
