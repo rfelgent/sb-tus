@@ -15,6 +15,9 @@ public class ExpirationServiceDays implements ExpirationService {
 
     @Override
     public Date expireDate(Asset asset) {
+        if (asset.getExpirationDate() != null) {
+            new Date(asset.getExpirationDate().getTime());
+        }
         long futureDays = TimeUnit.DAYS.toMillis(getDays());
         return new Date(asset.getCreationDate().getTime() + futureDays);
     }

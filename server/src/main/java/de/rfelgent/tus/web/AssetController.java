@@ -9,7 +9,6 @@ import de.rfelgent.tus.event.AssetCreatedEvent;
 import de.rfelgent.tus.event.AssetTerminatedEvent;
 import de.rfelgent.tus.service.AssetFactory;
 import de.rfelgent.tus.service.AssetStorage;
-import de.rfelgent.tus.service.ExpirationService;
 import de.rfelgent.tus.service.LocationResolver;
 import de.rfelgent.tus.service.AssetLocker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +44,6 @@ public class AssetController {
     private AssetLocker uploadLocker;
     @Autowired
     private LocationResolver locationResolver;
-    @Autowired
-    private ExpirationService expirationService;
 
     @PostMapping(value = {"", "/"})
     public ResponseEntity<Void> init(
@@ -72,10 +69,9 @@ public class AssetController {
         publisher.publishEvent(new AssetCreatedEvent(asset, location));
 
         ResponseEntity.BodyBuilder builder = ResponseEntity.status(HttpStatus.CREATED);
-        Date expirationDate = expirationService.expireDate(asset);
+        Date expirationDate = asset.getExpirationDate();
         if (expirationDate != null) {
-            //format RFC 7231
-            builder.header(TusHeaders.UPLOAD_EXPIRES, DateFormat.getDateInstance().format(expirationDate));
+            builder.header(TusHeaders.UPLOAD_EXPIRES, toRFC7231Format(expirationDate));
         }
         builder.header("Location", location.toString());
 
@@ -113,10 +109,9 @@ public class AssetController {
                 .cacheControl(CacheControl.noStore())
                 .header(TusHeaders.UPLOAD_OFFSET, assetStatus.getUploadedSize() + "");
         //according to the TUS protocol the expiration date may change ==> asking service again
-        Date expirationDate = expirationService.expireDate(asset);
+        Date expirationDate = asset.getExpirationDate();
         if (expirationDate != null) {
-            //format RFC 7231
-            builder.header(TusHeaders.UPLOAD_EXPIRES,  DateFormat.getDateInstance().format(expirationDate));
+            builder.header(TusHeaders.UPLOAD_EXPIRES, toRFC7231Format(expirationDate));
         }
         if (asset.getTotalSize() != null) {
             builder.header(TusHeaders.UPLOAD_LENGTH, asset.getTotalSize() + "");
@@ -124,5 +119,9 @@ public class AssetController {
             builder.header(TusHeaders.UPLOAD_DEFER_LENGTH, "1");
         }
         return builder.build();
+    }
+
+    private String toRFC7231Format(Date expirationDate) {
+        return DateFormat.getDateInstance().format(expirationDate);
     }
 }

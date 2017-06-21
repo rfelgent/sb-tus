@@ -34,7 +34,7 @@ public class UploadController {
     @Autowired
     private AssetStorage assetStorage;
     @Autowired
-    private AssetLocker uploadLocker;
+    private AssetLocker assetLocker;
 
     @RequestMapping(value = {"/{id}", "/{id}/"}, method = {RequestMethod.PATCH})
     public ResponseEntity<Void> upload(@RequestHeader(value = "Content-Type", required = false) String contentType,
@@ -64,7 +64,7 @@ public class UploadController {
         }
 
         try {
-            uploadLocker.lock(asset.getReferenceId());
+            assetLocker.lock(asset.getReferenceId());
 
             AssetStatus assetStatus = assetStorage.status(asset.getReferenceId());
             if (assetStatus.getUploadedSize() != offset) {
@@ -80,7 +80,7 @@ public class UploadController {
                     .header(TusHeaders.UPLOAD_OFFSET, assetStatus.getUploadedSize() + "")
                     .build();
         } finally {
-            uploadLocker.release(asset.getReferenceId());
+            assetLocker.release(asset.getReferenceId());
         }
     }
 }

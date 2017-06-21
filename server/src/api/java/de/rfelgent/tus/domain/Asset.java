@@ -27,6 +27,8 @@ public class Asset {
     /** date when the asset was created */
     @NotNull
     private Date creationDate;
+    /** date when the asset is expired */
+    private Date expirationDate;
     /** metadata of the asset */
     private Map<String, String> meta;
 
@@ -60,6 +62,14 @@ public class Asset {
 
     public void setMeta(Map<String, String> meta) {
         this.meta = meta;
+    }
+
+    public Date getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
     @Transient

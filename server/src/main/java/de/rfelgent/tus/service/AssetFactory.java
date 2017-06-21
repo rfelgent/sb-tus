@@ -16,13 +16,16 @@ public class AssetFactory {
     @Autowired
     private IdGenerator idGenerator;
 
+    @Autowired
+    private ExpirationService expirationService;
+
     public Asset newInstance() {
         Asset asset = new Asset();
         asset.setCreationDate(new Date());
         asset.setMeta(Collections.EMPTY_MAP);
 
         asset.setReferenceId(idGenerator.generateId(asset));
-
+        asset.setExpirationDate(expirationService.expireDate(asset));
         return asset;
     }
 }
