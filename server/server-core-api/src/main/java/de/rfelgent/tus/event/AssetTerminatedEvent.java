@@ -5,15 +5,9 @@ import de.rfelgent.tus.domain.Asset;
 /**
  * @author rfelgentraeger
  */
-public class AssetTerminatedEvent {
-
-    private Asset asset;
+public class AssetTerminatedEvent extends AbstractAssetEvent {
 
     public AssetTerminatedEvent(Asset asset) {
-        this.asset = asset;
-    }
-
-    public Asset getAsset() {
-        return asset;
+        super(asset);
     }
 }

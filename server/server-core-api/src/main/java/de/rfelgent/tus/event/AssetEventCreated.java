@@ -7,19 +7,13 @@ import java.net.URL;
 /**
  * @author rfelgentraeger
  */
-public class AssetCreatedEvent {
-
-    private Asset asset;
+public class AssetEventCreated extends AbstractAssetEvent {
 
     private String location;
 
-    public AssetCreatedEvent(Asset asset, String location) {
-        this.asset = asset;
+    public AssetEventCreated(Asset asset, String location) {
+        super(asset);
         this.location = location;
-    }
-
-    public Asset getAsset() {
-        return asset;
     }
 
     public String getLocation() {
