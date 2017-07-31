@@ -52,9 +52,7 @@ public class AssetController {
 
         Asset asset = assetFactory.newInstance();
         //some clients handle "unknown upload size/deferred upload" with an upload length equal to 0, e.g. tus-java-client !
-        if (uploadSize != null && uploadSize > 0) {
-            asset.setTotalSize(uploadSize);
-        }
+        asset.setTotalSize(uploadSize != null && uploadSize > 0 ? uploadSize : null);
         asset.setMetaFromMetaHttpHeader(uploadMeta);
 
         assetStorage.init(asset);

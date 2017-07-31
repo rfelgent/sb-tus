@@ -32,6 +32,7 @@ public class AppConfig {
     public LocationResolver locationResolver() {
         return new LocationResolverAbsolute();
     }
+
     @Bean
     @ConditionalOnMissingBean(AssetStorage.class)
     public AssetStorage assetStorage() {
