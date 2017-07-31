@@ -32,27 +32,10 @@ configurations {
     compile.exclude module: 'spring-boot-starter-tomcat'
 }
 
-sourceSets {
-    api {
-        java {
-            srcDirs = [ "$projectDir/src/api/java" ]
-        }
-    }
-    main {
-        compileClasspath += api.output
-        runtimeClasspath += api.output
-    }
-    test {
-        compileClasspath += api.output
-        runtimeClasspath += api.output
-    }
-}
-
 dependencies {
     //OWN
-    compile project(':tus')
+    compile project(':server:server-core-api')
     //3rd
-    apiCompile 'javax.validation:validation-api:1.1.0.Final'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-jetty'
     compile 'commons-io:commons-io:2.5'

@@ -33,7 +33,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 /**
- * This integration test is used to demonstrate the interoperability with tus-java-client.
+ * This integration test is used to demonstrate the interoperability with the official tus-java-client.
  *
  * @author rfelgentraeger
  */
@@ -53,7 +53,7 @@ public class TusClientUploadTest {
     @Value("classpath:prairie.jpg")
     private Resource picToUpload;
 
-    //preferring httpClient for "HEAD" request, as it is simpler to setup
+    //preferring httpClient for "HEAD" request, as it is simpler to set up
     //@Autowired
     //private TestRestTemplate testRestTemplate;
 
@@ -130,7 +130,5 @@ public class TusClientUploadTest {
         } catch (Exception ioe) {
             throw new IllegalStateException("Test setup failed");
         }
-
-
     }
 }
