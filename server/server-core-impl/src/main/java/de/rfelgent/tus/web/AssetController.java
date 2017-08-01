@@ -5,7 +5,7 @@ import de.rfelgent.tus.domain.Asset;
 import de.rfelgent.tus.domain.AssetStatus;
 import de.rfelgent.tus.domain.LockException;
 import de.rfelgent.tus.domain.StorageException;
-import de.rfelgent.tus.event.AssetEventCreated;
+import de.rfelgent.tus.event.AssetCreatedEvent;
 import de.rfelgent.tus.event.AssetTerminatedEvent;
 import de.rfelgent.tus.service.AssetFactory;
 import de.rfelgent.tus.service.AssetStorage;
@@ -64,7 +64,7 @@ public class AssetController {
             //TODO: handle orphaned resources (there is no URL to reference it!) Maybe TUS expiration feature?
             throw new RuntimeException("Location resolving failed");
         }
-        publisher.publishEvent(new AssetEventCreated(asset, location));
+        publisher.publishEvent(new AssetCreatedEvent(asset, location));
 
         ResponseEntity.BodyBuilder builder = ResponseEntity.status(HttpStatus.CREATED);
         Date expirationDate = asset.getExpirationDate();

@@ -7,11 +7,11 @@ import java.net.URL;
 /**
  * @author rfelgentraeger
  */
-public class AssetEventCreated extends AbstractAssetEvent {
+public class AssetCreatedEvent extends AbstractAssetEvent {
 
     private String location;
 
-    public AssetEventCreated(Asset asset, String location) {
+    public AssetCreatedEvent(Asset asset, String location) {
         super(asset);
         this.location = location;
     }
