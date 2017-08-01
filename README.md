@@ -22,7 +22,7 @@ This application provides following features:
   * Asset terminated
   * etc.
 
-This application is 100% compatible with the official TUS client for Java [TUS Java Client](https://github.com/tus/tus-java-client "Official TUS client Java based implementation")
+This application is 100% compatible with the official library [TUS Java Client](https://github.com/tus/tus-java-client "Official TUS client Java based implementation")
 
 ## Getting Started
 
