@@ -20,7 +20,7 @@ build {
 }
 
 jar {
-    archiveName 'tus-server.jar'
+    archiveName 'tus-server-core.jar'
 }
 
 bootRun {

@@ -5,8 +5,8 @@ import de.rfelgent.tus.domain.AssetStatus;
 import de.rfelgent.tus.domain.StorageException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -84,6 +84,14 @@ public class AssetStorageInMemory implements AssetStorage {
             //should not happen
             throw new StorageException("Storing uploaded data failed", ioe);
         }
+    }
+
+    @Override
+    public InputStream getStream(String referenceId) throws StorageException {
+        if (uploads.get(referenceId) == null) {
+            throw new StorageException("no binary exists");
+        }
+        return new ByteArrayInputStream(uploads.get(referenceId));
     }
 
     /**

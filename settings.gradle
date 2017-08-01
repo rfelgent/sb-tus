@@ -1,5 +1,6 @@
 rootProject.name = 'sb-tus'
 
+include 'tus-protocol'
 include 'server:server-core-api'
 include 'server:server-core-impl'
-include 'tus-protocol'
+

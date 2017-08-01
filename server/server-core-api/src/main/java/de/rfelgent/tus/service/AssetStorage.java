@@ -26,6 +26,8 @@ public interface AssetStorage {
 
     void write(String referenceId, InputStream is) throws StorageException;
 
+    InputStream getStream(String referenceId) throws StorageException;
+
     /**
      * @param referenceId
      * @return may be <code>null</code> if the Asset does not exist.

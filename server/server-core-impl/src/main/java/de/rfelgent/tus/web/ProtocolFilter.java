@@ -32,12 +32,22 @@ public class ProtocolFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse)response;
 
         String versionHeader = req.getHeader(TusHeaders.TUS_RESUMABLE);
+
+        //assume a download (which is not part of TUS protocol spec!)
+        if ("GET".equalsIgnoreCase(req.getMethod())
+                && req.getRequestURI().startsWith("/files/")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        //TUS protocol spec
         if (!version.equalsIgnoreCase(versionHeader)) {
             resp.setHeader(TusHeaders.TUS_VERSION, version);
             resp.setStatus(HttpStatus.PRECONDITION_FAILED.value());
             LOGGER.warn("Canceling processing request, as the version {} is not supported", versionHeader);
             return;
         }
+
         LOGGER.debug("Version {} supported. Continue to process request", versionHeader);
         try {
             chain.doFilter(request, response);
@@ -46,7 +56,6 @@ public class ProtocolFilter implements Filter {
                 resp.setHeader(TusHeaders.TUS_RESUMABLE, version);
             }
         }
-
     }
 
     @Override

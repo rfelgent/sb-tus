@@ -40,9 +40,9 @@ import static org.junit.Assert.assertNull;
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TusClientUploadTest {
+public class TusClientTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TusClientUploadTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TusClientTest.class);
 
     @Autowired
     private LocationResolver locationResolver;

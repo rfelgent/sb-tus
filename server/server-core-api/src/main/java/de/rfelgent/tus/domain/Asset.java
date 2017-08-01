@@ -1,5 +1,6 @@
 package de.rfelgent.tus.domain;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.beans.Transient;
 import java.nio.charset.StandardCharsets;
@@ -23,6 +24,7 @@ public class Asset {
     @NotNull
     private String referenceId;
     /** total size of the data to upload in bytes */
+    @Min(1)
     private Long totalSize;
     /** date when the asset was created */
     @NotNull
