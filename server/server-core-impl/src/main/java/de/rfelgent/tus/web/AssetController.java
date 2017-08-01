@@ -81,7 +81,7 @@ public class AssetController {
         Asset asset = assetStorage.find(id);
         if (asset != null) {
             try {
-                //locking can fail if there is a current upload going on. what is the correct behaviour? force cancel?
+                //TODO: handle locking failure in case of running upload. What is the correct behaviour? Force cancel?
                 uploadLocker.lock(asset.getReferenceId());
                 assetStorage.terminate(id);
                 publisher.publishEvent(new AssetTerminatedEvent(asset));

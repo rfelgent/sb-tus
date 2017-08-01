@@ -64,7 +64,5 @@ public class DownloadController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-
-
     }
 }
