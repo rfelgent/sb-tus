@@ -74,14 +74,13 @@ public class UploadDownloadTest {
         createHeaders.set(TusHeaders.TUS_RESUMABLE, TusVersion.SEMVERSION_1_0_0);
         createHeaders.set("Upload-Length", Long.toString(picToUpload.getFile().length()));
 
-        ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
+        ResponseEntity<Void> responseEntityCreateAsset = testRestTemplate.exchange(
                 //as we are using TestRestTemplate, relative paths should work as well!
                 "/files/",
                 HttpMethod.POST, new HttpEntity(createHeaders), Void.class);
-        assertEquals("unexpected status code ('" + responseEntity.getStatusCodeValue() + "') while creating upload", 201, responseEntity.getStatusCodeValue());
-        URI absoluteUploadUri = responseEntity.getHeaders().getLocation();
+        assertEquals("unexpected status code ('" + responseEntityCreateAsset.getStatusCodeValue() + "') while creating upload", 201, responseEntityCreateAsset.getStatusCodeValue());
+        URI absoluteUploadUri = responseEntityCreateAsset.getHeaders().getLocation();
         assertNotNull("missing upload URL in response for creating upload", absoluteUploadUri);
-        String relativeUploadUrl = absoluteUploadUri.getPath();
 
         //upload the binary of the asset
         HttpHeaders uploadHeaders = new HttpHeaders();
@@ -90,18 +89,16 @@ public class UploadDownloadTest {
         uploadHeaders.set("Content-Type", "application/offset+octet-stream");
         uploadHeaders.set("Expect", "100-continue");
 
-        responseEntity = testRestTemplate.exchange(
+        ResponseEntity<Void> responseEntityUploadBinary = testRestTemplate.exchange(
                 //as we are using TestRestTemplate, relative paths should work as well!
-                relativeUploadUrl,
+                absoluteUploadUri.getPath(),
                 HttpMethod.PATCH, new HttpEntity<>(picToUpload, uploadHeaders), Void.class);
-        assertEquals("unexpected status code ('" + responseEntity.getStatusCodeValue() + "') while creating upload", 204, responseEntity.getStatusCodeValue());
+        assertEquals("unexpected status code ('" + responseEntityUploadBinary.getStatusCodeValue() + "') while creating upload", 204, responseEntityUploadBinary.getStatusCodeValue());
 
         //download the binary of the asset
-        String absoluteDownloadUrl = absoluteUploadUri.toURL().toString();
-        String relativeDownloadUrl = absoluteDownloadUrl.substring(absoluteDownloadUrl.lastIndexOf("/files/"));
         ResponseEntity<byte[]> response = testRestTemplate.exchange(
                 //as we are using TestRestTemplate, relative paths should work as well!
-                relativeDownloadUrl,
+                absoluteUploadUri.getPath(),
                 HttpMethod.GET, null, byte[].class, Collections.EMPTY_MAP);
 
         assertEquals(200, response.getStatusCodeValue());
