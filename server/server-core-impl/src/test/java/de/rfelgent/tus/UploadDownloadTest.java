@@ -3,9 +3,6 @@ package de.rfelgent.tus;
 import de.rfelgent.tus.service.LocationResolver;
 import de.rfelgent.tus.service.LocationResolverAbsolute;
 import io.tus.java.client.ProtocolException;
-import io.tus.java.client.TusClient;
-import io.tus.java.client.TusUpload;
-import io.tus.java.client.TusUploader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +14,8 @@ import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -28,11 +27,13 @@ import java.awt.image.DataBuffer;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -65,16 +66,38 @@ public class UploadDownloadTest {
     @Test
     public void uploadAndDownloadImage() throws IOException, ProtocolException {
         //prepare
-        TusUploader uploader = createTusUploader();
 
         //test
-        do {
-            LOGGER.info("Performing upload at offset {}", uploader.getOffset());
-        } while (uploader.uploadChunk() > -1);
-        uploader.finish();
+        //create the asset
+        URL assetCreationURL = new URL("http://localhost:" + serverPort + "/files");
+        HttpHeaders createHeaders = new HttpHeaders();
+        createHeaders.set(TusHeaders.TUS_RESUMABLE, TusVersion.SEMVERSION_1_0_0);
+        createHeaders.set("Upload-Length", Long.toString(picToUpload.getFile().length()));
 
-        //verify the download
-        String absoluteDownloadUrl = uploader.getUploadURL().toString();
+        ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
+                //as we are using TestRestTemplate, relative paths should work as well!
+                "/files/",
+                HttpMethod.POST, new HttpEntity(createHeaders), Void.class);
+        assertEquals("unexpected status code ('" + responseEntity.getStatusCodeValue() + "') while creating upload", 201, responseEntity.getStatusCodeValue());
+        URI absoluteUploadUri = responseEntity.getHeaders().getLocation();
+        assertNotNull("missing upload URL in response for creating upload", absoluteUploadUri);
+        String relativeUploadUrl = absoluteUploadUri.getPath();
+
+        //upload the binary of the asset
+        HttpHeaders uploadHeaders = new HttpHeaders();
+        uploadHeaders.set(TusHeaders.TUS_RESUMABLE, TusVersion.SEMVERSION_1_0_0);
+        uploadHeaders.set(TusHeaders.UPLOAD_OFFSET, Integer.toString(0));
+        uploadHeaders.set("Content-Type", "application/offset+octet-stream");
+        uploadHeaders.set("Expect", "100-continue");
+
+        responseEntity = testRestTemplate.exchange(
+                //as we are using TestRestTemplate, relative paths should work as well!
+                relativeUploadUrl,
+                HttpMethod.PATCH, new HttpEntity<>(picToUpload, uploadHeaders), Void.class);
+        assertEquals("unexpected status code ('" + responseEntity.getStatusCodeValue() + "') while creating upload", 204, responseEntity.getStatusCodeValue());
+
+        //download the binary of the asset
+        String absoluteDownloadUrl = absoluteUploadUri.toURL().toString();
         String relativeDownloadUrl = absoluteDownloadUrl.substring(absoluteDownloadUrl.lastIndexOf("/files/"));
         ResponseEntity<byte[]> response = testRestTemplate.exchange(
                 //as we are using TestRestTemplate, relative paths should work as well!
@@ -84,8 +107,9 @@ public class UploadDownloadTest {
         assertEquals(200, response.getStatusCodeValue());
         assertFalse("Download is not specified by TUS protocol. Therefore, no TUS specific headers required", response.getHeaders().containsKey(TusHeaders.TUS_RESUMABLE));
 
+        //verify
         byte[] downloadedPic = response.getBody();
-        assertEquals("downloaded content size must be equal of original uploaded file", picToUpload.getFile().length(), downloadedPic.length);
+        assertEquals("Downloaded content size must be equal of original uploaded file", picToUpload.getFile().length(), downloadedPic.length);
         assertTrue("The image content must be the same", isSameImage(picToUpload.getFile(), downloadedPic));
     }
 
@@ -109,23 +133,5 @@ public class UploadDownloadTest {
             }
         }
         return true;
-    }
-
-    private TusUploader createTusUploader() {
-        TusClient client = new TusClient();
-        try {
-            client.setUploadCreationURL(new URL("http://localhost:" + serverPort + "/files"));
-            client.disableResuming();
-
-            TusUpload upload = new TusUpload();
-            upload.setInputStream(picToUpload.getInputStream());
-            upload.setSize(picToUpload.getFile().length());
-
-            TusUploader uploader = client.createUpload(upload);
-            uploader.setChunkSize(1024);     //1kb
-            return uploader;
-        } catch (Exception ioe) {
-            throw new IllegalStateException("Test setup failed");
-        }
     }
 }
