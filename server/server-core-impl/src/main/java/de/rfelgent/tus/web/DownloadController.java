@@ -41,7 +41,7 @@ public class DownloadController {
         }
         if (asset.getExpirationDate() != null &&
                 asset.getExpirationDate().before(new Date())) {
-            LOGGER.warn("The asset {} is not updatable due to expiration date", asset.getReferenceId());
+            LOGGER.warn("The asset {} is not available due to its expiration date", asset.getReferenceId());
             throw new AssetNotFoundException();
         }
 
