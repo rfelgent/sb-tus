@@ -8,12 +8,14 @@ import de.rfelgent.tus.domain.StorageException;
 import de.rfelgent.tus.event.AssetCreatedEvent;
 import de.rfelgent.tus.event.AssetTerminatedEvent;
 import de.rfelgent.tus.service.AssetFactory;
-import de.rfelgent.tus.service.AssetStorage;
-import de.rfelgent.tus.service.LocationResolver;
 import de.rfelgent.tus.service.AssetLocker;
+import de.rfelgent.tus.service.AssetStorage;
+import de.rfelgent.tus.service.ExpirationService;
+import de.rfelgent.tus.service.LocationResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,9 +25,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.text.DateFormat;
-import java.util.Date;
 
 /**
  * @author rfelgentraeger
@@ -44,6 +43,8 @@ public class AssetController {
     private AssetLocker uploadLocker;
     @Autowired
     private LocationResolver locationResolver;
+    @Autowired
+    private ExpirationService expirationService;
 
     @PostMapping(value = {"", "/"})
     public ResponseEntity<Void> init(
@@ -66,14 +67,12 @@ public class AssetController {
         }
         publisher.publishEvent(new AssetCreatedEvent(asset, location));
 
-        ResponseEntity.BodyBuilder builder = ResponseEntity.status(HttpStatus.CREATED);
-        Date expirationDate = asset.getExpirationDate();
-        if (expirationDate != null) {
-            builder.header(TusHeaders.UPLOAD_EXPIRES, toRFC7231Format(expirationDate));
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Location", location.toString());
+        if (asset.getExpirationDate() != null) {
+            headers.set(TusHeaders.UPLOAD_EXPIRES, expirationService.toRFC7231Format(asset.getExpirationDate()));
         }
-        builder.header("Location", location.toString());
-
-        return builder.build();
+        return ResponseEntity.status(HttpStatus.CREATED).headers(headers).build();
     }
 
     @DeleteMapping(value= {"/{id}", "/{id}/"})
@@ -103,23 +102,18 @@ public class AssetController {
         }
 
         AssetStatus assetStatus = assetStorage.status(asset.getReferenceId());
-        ResponseEntity.HeadersBuilder builder = ResponseEntity.status(HttpStatus.OK)
-                .cacheControl(CacheControl.noStore())
-                .header(TusHeaders.UPLOAD_OFFSET, assetStatus.getUploadedSize() + "");
-        //according to the TUS protocol the expiration date may change ==> asking service again
-        Date expirationDate = asset.getExpirationDate();
-        if (expirationDate != null) {
-            builder.header(TusHeaders.UPLOAD_EXPIRES, toRFC7231Format(expirationDate));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setCacheControl(CacheControl.noStore().getHeaderValue());
+        headers.set(TusHeaders.UPLOAD_OFFSET, Long.toString(assetStatus.getUploadedSize()));
+        if (asset.getExpirationDate() != null) {
+            headers.set(TusHeaders.UPLOAD_EXPIRES, expirationService.toRFC7231Format(asset.getExpirationDate()));
         }
         if (asset.getTotalSize() != null) {
-            builder.header(TusHeaders.UPLOAD_LENGTH, asset.getTotalSize() + "");
+            headers.set(TusHeaders.UPLOAD_LENGTH, Long.toString(asset.getTotalSize()));
         } else {
-            builder.header(TusHeaders.UPLOAD_DEFER_LENGTH, "1");
+            headers.set(TusHeaders.UPLOAD_DEFER_LENGTH, "1");
         }
-        return builder.build();
-    }
-
-    private String toRFC7231Format(Date expirationDate) {
-        return DateFormat.getDateInstance().format(expirationDate);
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).build();
     }
 }

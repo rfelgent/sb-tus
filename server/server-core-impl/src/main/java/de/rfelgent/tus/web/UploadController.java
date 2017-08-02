@@ -8,9 +8,11 @@ import de.rfelgent.tus.domain.LockException;
 import de.rfelgent.tus.domain.StorageException;
 import de.rfelgent.tus.service.AssetStorage;
 import de.rfelgent.tus.service.AssetLocker;
+import de.rfelgent.tus.service.ExpirationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +37,8 @@ public class UploadController {
     private AssetStorage assetStorage;
     @Autowired
     private AssetLocker assetLocker;
+    @Autowired
+    private ExpirationService expirationService;
 
     @RequestMapping(value = {"/{id}", "/{id}/"}, method = {RequestMethod.PATCH})
     public ResponseEntity<Void> upload(@RequestHeader(value = "Content-Type", required = false) String contentType,
@@ -76,9 +80,12 @@ public class UploadController {
             //update the status after previous write attempt
             assetStatus = assetStorage.status(asset.getReferenceId());
 
-            return ResponseEntity.noContent()
-                    .header(TusHeaders.UPLOAD_OFFSET, assetStatus.getUploadedSize() + "")
-                    .build();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set(TusHeaders.UPLOAD_OFFSET, Long.toString(assetStatus.getUploadedSize()));
+            if (asset.getExpirationDate() != null) {
+                headers.set(TusHeaders.UPLOAD_EXPIRES, expirationService.toRFC7231Format(asset.getExpirationDate()));
+            }
+            return ResponseEntity.noContent().headers(headers).build();
         } finally {
             assetLocker.release(asset.getReferenceId());
         }
