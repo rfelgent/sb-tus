@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 
 /**
  * @author rfelgentraeger
@@ -38,6 +39,11 @@ public class DownloadController {
         if (asset == null) {
             throw new AssetNotFoundException();
         }
+        if (asset.getExpirationDate() != null &&
+                asset.getExpirationDate().before(new Date())) {
+            LOGGER.warn("The asset {} is not updatable due to expiration date", asset.getReferenceId());
+            throw new AssetNotFoundException();
+        }
 
         AssetStatus status = assetStorage.status(asset.getReferenceId());
 
@@ -46,7 +52,6 @@ public class DownloadController {
             LOGGER.debug("A currently running upload for asset {} prevents from download!", id);
             canDownload = false;
         }
-
         if (asset.getTotalSize() != null
                 && asset.getTotalSize() != status.getUploadedSize()) {
             LOGGER.debug("The asset {} is not fully uploaded which prevents from download!", id);

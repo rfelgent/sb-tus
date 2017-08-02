@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * @author rfelgentraeger
@@ -56,7 +57,11 @@ public class UploadController {
         if (asset == null) {
             throw new AssetNotFoundException();
         }
-
+        if (asset.getExpirationDate() != null &&
+                asset.getExpirationDate().before(new Date())) {
+            LOGGER.warn("The asset {} is not updatable due to expiration date", asset.getReferenceId());
+            throw new AssetNotFoundException();
+        }
         if (asset.getTotalSize() == null
                 && uploadLength != null && uploadLength > 0) {
             asset.setTotalSize(uploadLength);
