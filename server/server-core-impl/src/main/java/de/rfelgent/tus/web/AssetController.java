@@ -18,6 +18,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -113,6 +114,10 @@ public class AssetController {
             headers.set(TusHeaders.UPLOAD_LENGTH, Long.toString(asset.getTotalSize()));
         } else {
             headers.set(TusHeaders.UPLOAD_DEFER_LENGTH, "1");
+        }
+        String metaHeader = asset.toMetaHttpHeader();
+        if (!metaHeader.isEmpty()) {
+            headers.set(TusHeaders.UPLOAD_META, metaHeader);
         }
         return ResponseEntity.status(HttpStatus.OK).headers(headers).build();
     }

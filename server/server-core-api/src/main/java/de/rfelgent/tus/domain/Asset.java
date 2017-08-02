@@ -95,13 +95,10 @@ public class Asset {
     public String toMetaHttpHeader() {
         String retVal = "";
         if (getMeta() != null && !getMeta().isEmpty()) {
-            retVal = getMeta().entrySet().stream().map(new Function<Map.Entry<String,String>, String>() {
-                @Override
-                public String apply(Map.Entry<String, String> stringStringEntry) {
-                    final String key = stringStringEntry.getKey();
-                    final String value = stringStringEntry.getValue();
-                    return key + " " + Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8));
-                }
+            retVal = getMeta().entrySet().stream().map(stringStringEntry -> {
+                final String key = stringStringEntry.getKey();
+                final String value = stringStringEntry.getValue();
+                return key + " " + Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8));
             }).collect(joining(","));
         }
         return retVal;
